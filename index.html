@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grimm Waves Radio</title>
+<meta name="description" content="Grimm Waves Radio — señal nocturna, música sin filtro, las 24 horas en vivo.">
+<link rel="icon" href="assets/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Grimm Waves Radio">
+<meta property="og:description" content="Señal nocturna para almas inquietas. Música sin filtro, las 24 horas en vivo.">
+<meta property="og:image" content="assets/logo.webp">
+<meta property="og:type" content="website">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <img src="assets/logo.webp" alt="Grimm Waves Radio">
+    <span>Grimm Waves</span>
+  </div>
+  <nav class="main-nav">
+    <div class="navlinks-mobile-hide" style="display:flex; gap:34px;">
+      <a href="#posts">Posts</a>
+      <a href="#programacion">Programación</a>
+      <a href="#footer-links">Escuchar</a>
+    </div>
+    <div class="auth-area">
+      <button class="admin-btn" id="adminLoginBtn" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/></svg>
+        Admin
+      </button>
+      <div class="admin-pill" id="adminPill" hidden>
+        <span class="admin-pill-tag">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/></svg>
+          Editando como admin
+        </span>
+        <button class="admin-btn" id="openConfigBtn" type="button" aria-label="Configuración de la estación">⚙</button>
+        <button class="admin-btn" id="logoutBtn" type="button">Salir</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <span class="live-pill"><span class="live-dot"></span> Al aire ahora</span>
+    <h1>Grimm Waves Radio</h1>
+    <p class="tagline">Señal nocturna para almas inquietas. Música sin filtro, voces sin máscara — las 24 horas, directo desde el otro lado.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" id="heroListenBtn" type="button">
+        <svg id="heroPlayIcon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        Escuchar en vivo
+      </button>
+      <a href="#programacion" class="btn-ghost">Ver programación</a>
+    </div>
+  </div>
+</section>
+
+<section class="onair">
+  <div class="wrap">
+    <div class="onair-now">
+      <div class="glyph">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffd9c2" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      </div>
+      <div>
+        <div class="label">Sonando ahora</div>
+        <h3 id="onAirTitle">Cargando…</h3>
+        <p id="onAirDesc"></p>
+      </div>
+    </div>
+    <div class="up-next">
+      <span>Siguiente</span>
+      <div class="divider"></div>
+      <div id="upNextText">—</div>
+    </div>
+  </div>
+</section>
+
+<section id="posts">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Últimos posts</h2>
+      <p>Novedades de la estación, lanzamientos y detrás de cámaras.</p>
+      <button class="add-post-btn admin-only" id="addPostBtn" type="button">+ Nuevo post</button>
+    </div>
+    <div class="posts-grid" id="postsGrid">
+      <p class="empty-note">Cargando posts…</p>
+    </div>
+  </div>
+</section>
+
+<section id="programacion" class="programming">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Programación</h2>
+      <p>La parrilla semanal de Grimm Waves.</p>
+      <button class="add-show-btn admin-only" id="addShowBtn" type="button">+ Agregar programa</button>
+    </div>
+    <div class="day-tabs" id="dayTabs">
+      <button class="day-tab active" data-day="mon">Lunes</button>
+      <button class="day-tab" data-day="tue">Martes</button>
+      <button class="day-tab" data-day="wed">Miércoles</button>
+      <button class="day-tab" data-day="thu">Jueves</button>
+      <button class="day-tab" data-day="fri">Viernes</button>
+      <button class="day-tab" data-day="sat">Sábado</button>
+      <button class="day-tab" data-day="sun">Domingo</button>
+    </div>
+    <div class="show-list" id="showList">
+      <p class="empty-note">Cargando programación…</p>
+    </div>
+  </div>
+</section>
+
+<footer id="footer-links">
+  <div>
+    <div class="f-brand">
+      <img src="assets/logo.webp" alt="Grimm Waves Radio">
+      <span>Grimm Waves</span>
+    </div>
+    <p class="desc">Radio independiente transmitiendo las 24 horas. Sin filtros, sin máscaras.</p>
+  </div>
+  <div>
+    <h4>Escuchar</h4>
+    <ul>
+      <li><a href="#" id="footerStreamLink" target="_blank" rel="noopener">Stream directo</a></li>
+      <li><a href="#" id="footerAzuraLink" target="_blank" rel="noopener">Panel AzuraCast</a></li>
+      <li><a href="#programacion">Programación</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>Estación</h4>
+    <ul>
+      <li><a href="#posts">Posts</a></li>
+      <li><a href="#">Contacto</a></li>
+      <li><a href="#">Enviar música</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="foot-bottom">© 2026 Grimm Waves Radio</div>
+
+<div class="player-bar">
+  <button class="player-play" id="playBtn" aria-label="Reproducir">
+    <svg id="playIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+  </button>
+  <div class="player-info">
+    <div class="track" id="playerTrack">Grimm Waves Radio</div>
+    <div class="station" id="playerStation">Tocá play para escuchar en vivo</div>
+  </div>
+  <audio id="radioAudio" preload="none"></audio>
+  <div class="player-wave paused" id="playerWave"><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="player-vol">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
+    <input type="range" id="volSlider" min="0" max="100" value="70" aria-label="Volumen">
+  </div>
+</div>
+
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" data-close="loginModal" aria-label="Cerrar">✕</button>
+    <h3>Acceso administrador</h3>
+    <p class="sub">Gestioná la programación y los posts de la radio.</p>
+    <label for="loginEmail">Email</label>
+    <input type="email" id="loginEmail" placeholder="admin@grimmwaves.com">
+    <label for="loginPass">Contraseña</label>
+    <input type="password" id="loginPass" placeholder="••••••••">
+    <p class="login-status-msg" id="loginStatusMsg"></p>
+    <button class="btn-primary" id="loginSubmitBtn" type="button">Entrar</button>
+    <p class="modal-note">El usuario admin se crea desde la consola de Firebase, no desde acá.</p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="configModal">
+  <div class="modal">
+    <button class="modal-close" data-close="configModal" aria-label="Cerrar">✕</button>
+    <h3>Configuración de la estación</h3>
+    <p class="sub">Se guarda para todos los que visiten el sitio.</p>
+    <label for="cfgStream">URL directa del stream (audio)</label>
+    <input type="text" id="cfgStream" placeholder="https://stream.zeno.fm/xxxxxxxx">
+    <label for="cfgNowPlaying">URL de Now Playing de AzuraCast (opcional)</label>
+    <input type="text" id="cfgNowPlaying" placeholder="https://tu-azuracast.com/api/nowplaying/tu_estacion">
+    <label for="cfgAzura">Link del panel/stream de AzuraCast (opcional)</label>
+    <input type="text" id="cfgAzura" placeholder="https://tu-azuracast.com/public/tu_estacion">
+    <label for="cfgOnAirTitle">Programa al aire (si no hay Now Playing)</label>
+    <input type="text" id="cfgOnAirTitle" placeholder="Sesión Nocturna con MK">
+    <label for="cfgOnAirDesc">Descripción del programa al aire</label>
+    <input type="text" id="cfgOnAirDesc" placeholder="Dark synth, industrial…">
+    <label for="cfgUpNext">Siguiente programa</label>
+    <input type="text" id="cfgUpNext" placeholder="Voces del Abismo · 02:00">
+    <button class="btn-primary" id="saveConfigBtn" type="button">Guardar</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="postModal">
+  <div class="modal">
+    <button class="modal-close" data-close="postModal" aria-label="Cerrar">✕</button>
+    <h3>Nuevo post</h3>
+    <p class="sub">Se publica al instante para todos.</p>
+    <label for="postTag">Etiqueta</label>
+    <input type="text" id="postTag" placeholder="Anuncio, Comunidad, Programación…">
+    <label for="postTitle">Título</label>
+    <input type="text" id="postTitle" placeholder="Título del post">
+    <label for="postExcerpt">Resumen</label>
+    <input type="text" id="postExcerpt" placeholder="Dos líneas contando de qué se trata">
+    <button class="btn-primary" id="savePostBtn" type="button">Publicar</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="showModal">
+  <div class="modal">
+    <button class="modal-close" data-close="showModal" aria-label="Cerrar">✕</button>
+    <h3>Agregar programa</h3>
+    <p class="sub">Se agrega a la parrilla del día elegido.</p>
+    <label for="showDay">Día</label>
+    <select id="showDay" style="width:100%; background:var(--bg); border:1px solid var(--line); color:var(--bone); padding:11px 14px; border-radius:4px; font-family:var(--font-body); margin-bottom:18px;">
+      <option value="mon">Lunes</option>
+      <option value="tue">Martes</option>
+      <option value="wed">Miércoles</option>
+      <option value="thu">Jueves</option>
+      <option value="fri">Viernes</option>
+      <option value="sat">Sábado</option>
+      <option value="sun">Domingo</option>
+    </select>
+    <label for="showTime">Horario</label>
+    <input type="text" id="showTime" placeholder="20:00 – 23:00">
+    <label for="showName">Nombre del programa</label>
+    <input type="text" id="showName" placeholder="Ritual de Viernes">
+    <label for="showHost">Conducción</label>
+    <input type="text" id="showHost" placeholder="con la comunidad">
+    <button class="btn-primary" id="saveShowBtn" type="button">Agregar</button>
+  </div>
+</div>
+
+<!-- Firebase (compat SDK, sin build step) -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
