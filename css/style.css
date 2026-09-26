@@ -17,6 +17,7 @@
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   html { scroll-padding-top: 90px; height: 100%; }
+  [hidden] { display: none !important; }
   *, *::before, *::after { box-sizing: border-box; }
   body {
     margin: 0;
