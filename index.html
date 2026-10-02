@@ -25,11 +25,14 @@
     <span>Grimm Waves</span>
   </div>
   <nav class="main-nav">
-    <div class="navlinks-mobile-hide" style="display:flex; gap:34px;">
+    <div class="navlinks-mobile-hide">
       <a href="#posts">Posts</a>
       <a href="#programacion">Programación</a>
       <a href="#footer-links">Escuchar</a>
     </div>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menú" aria-expanded="false">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
     <div class="auth-area">
       <button class="admin-btn" id="adminLoginBtn" type="button">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/></svg>
@@ -45,6 +48,11 @@
       </div>
     </div>
   </nav>
+  <div class="mobile-nav-panel" id="mobileNavPanel">
+    <a href="#posts">Posts</a>
+    <a href="#programacion">Programación</a>
+    <a href="#footer-links">Escuchar</a>
+  </div>
 </header>
 
 <section class="hero">
@@ -103,6 +111,7 @@
       <p>La parrilla semanal de Grimm Waves.</p>
       <button class="add-show-btn admin-only" id="addShowBtn" type="button">+ Agregar programa</button>
     </div>
+    <div class="tz-strip" id="tzStrip"></div>
     <div class="day-tabs" id="dayTabs">
       <button class="day-tab active" data-day="mon">Lunes</button>
       <button class="day-tab" data-day="tue">Martes</button>
@@ -208,32 +217,55 @@
     <input type="text" id="postTitle" placeholder="Título del post">
     <label for="postExcerpt">Resumen</label>
     <input type="text" id="postExcerpt" placeholder="Dos líneas contando de qué se trata">
+    <label for="postImageFile">Imagen (opcional)</label>
+    <input type="file" id="postImageFile" accept="image/*">
+    <label for="postVideoUrl">Link de video (opcional, YouTube o similar)</label>
+    <input type="text" id="postVideoUrl" placeholder="https://youtube.com/watch?v=...">
+    <label for="postLinkUrl">Enlace externo (opcional)</label>
+    <input type="text" id="postLinkUrl" placeholder="https://...">
+    <p class="login-status-msg" id="postStatusMsg"></p>
     <button class="btn-primary" id="savePostBtn" type="button">Publicar</button>
   </div>
 </div>
 
 <div class="modal-overlay" id="showModal">
-  <div class="modal">
+  <div class="modal modal-wide">
     <button class="modal-close" data-close="showModal" aria-label="Cerrar">✕</button>
-    <h3>Agregar programa</h3>
-    <p class="sub">Se agrega a la parrilla del día elegido.</p>
-    <label for="showDay">Día</label>
-    <select id="showDay" style="width:100%; background:var(--bg); border:1px solid var(--line); color:var(--bone); padding:11px 14px; border-radius:4px; font-family:var(--font-body); margin-bottom:18px;">
-      <option value="mon">Lunes</option>
-      <option value="tue">Martes</option>
-      <option value="wed">Miércoles</option>
-      <option value="thu">Jueves</option>
-      <option value="fri">Viernes</option>
-      <option value="sat">Sábado</option>
-      <option value="sun">Domingo</option>
-    </select>
-    <label for="showTime">Horario</label>
-    <input type="text" id="showTime" placeholder="20:00 – 23:00">
+    <h3 id="showModalTitle">Agregar programa</h3>
+    <p class="sub">La hora se carga en horario de Chile.</p>
     <label for="showName">Nombre del programa</label>
-    <input type="text" id="showName" placeholder="Ritual de Viernes">
-    <label for="showHost">Conducción</label>
-    <input type="text" id="showHost" placeholder="con la comunidad">
-    <button class="btn-primary" id="saveShowBtn" type="button">Agregar</button>
+    <input type="text" id="showName" placeholder="Ej: AniMusic">
+    <div class="field-row">
+      <div>
+        <label for="showStart">Hora inicio</label>
+        <input type="time" id="showStart">
+      </div>
+      <div>
+        <label for="showEnd">Hora fin</label>
+        <input type="time" id="showEnd">
+      </div>
+    </div>
+    <label for="showDesc">Descripción (artistas, contenido…)</label>
+    <textarea id="showDesc" rows="3" placeholder="Ej: con Juan Pérez. Anime y J-pop toda la noche." style="width:100%; background:var(--bg); border:1px solid var(--line); color:var(--bone); padding:11px 14px; border-radius:4px; font-family:var(--font-body); margin-bottom:18px; resize:vertical;"></textarea>
+    <label for="showType">Tipo de programa</label>
+    <input type="text" id="showType" placeholder="Ej: habitual, especial, en vivo…">
+    <label for="showColor">Color de etiqueta</label>
+    <div class="field-row color-row">
+      <input type="color" id="showColorPicker" value="#9c1f1f">
+      <input type="text" id="showColor" value="#9c1f1f">
+    </div>
+    <label>Días de transmisión</label>
+    <div class="days-checks" id="daysChecks">
+      <label><input type="checkbox" value="mon"> Lunes</label>
+      <label><input type="checkbox" value="tue"> Martes</label>
+      <label><input type="checkbox" value="wed"> Miércoles</label>
+      <label><input type="checkbox" value="thu"> Jueves</label>
+      <label><input type="checkbox" value="fri"> Viernes</label>
+      <label><input type="checkbox" value="sat"> Sábado</label>
+      <label><input type="checkbox" value="sun"> Domingo</label>
+    </div>
+    <p class="login-status-msg" id="showStatusMsg"></p>
+    <button class="btn-primary" id="saveShowBtn" type="button">Guardar</button>
   </div>
 </div>
 
@@ -241,6 +273,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 <script src="js/firebase-config.js"></script>
 <script src="js/app.js"></script>
 </body>
