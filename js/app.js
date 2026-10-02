@@ -141,7 +141,6 @@ saveConfigBtn.addEventListener('click', async () => {
 function applyConfigToUI() {
   $('footerStreamLink').href = currentConfig.streamUrl || '#';
   $('footerAzuraLink').href = currentConfig.azuraUrl || '#';
-  $('upNextText').textContent = currentConfig.upNext;
   setupNowPlaying();
   updateOnAirUI();
 }
@@ -239,10 +238,33 @@ function getCurrentProgram() {
   return null;
 }
 
+function getNextProgram() {
+  const dayKeysBySunday = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+  const now = getChileNow();
+  const nowAbs = now.getDay() * 1440 + now.getHours() * 60 + now.getMinutes();
+
+  let best = null, bestAbs = Infinity;
+  Object.values(programsCache).forEach(p => {
+    (p.days || []).forEach(dayKey => {
+      const dIdx = dayKeysBySunday.indexOf(dayKey);
+      if (dIdx === -1) return;
+      let abs = dIdx * 1440 + timeToMinutes(p.startTime);
+      if (abs <= nowAbs) abs += 7 * 1440;
+      if (abs < bestAbs) { bestAbs = abs; best = p; }
+    });
+  });
+  return best;
+}
+
 function updateOnAirUI() {
   const prog = getCurrentProgram();
   const onAirTitleEl = $('onAirTitle');
   const onAirDescEl = $('onAirDesc');
+
+  const next = getNextProgram();
+  $('upNextText').innerHTML = next
+    ? `<b>${escapeHtml(next.name)}</b> · ${escapeHtml(next.startTime)}`
+    : escapeHtml(currentConfig.upNext || '—');
 
   if (prog) {
     onAirTitleEl.textContent = `${prog.name} · ${prog.startTime}–${prog.endTime}`;
@@ -254,6 +276,7 @@ function updateOnAirUI() {
 
   const trackLabel = currentSongLabel || (prog ? prog.name : 'Grimm Waves Radio');
   playerTrack.textContent = trackLabel;
+  if (!radioAudio.paused) playerStation.textContent = getProgramLabelText();
   updateMediaSession(prog, trackLabel);
 }
 
@@ -527,12 +550,17 @@ async function deleteShow(id) {
 }
 
 // ---- Reproductor real ----
+function getProgramLabelText() {
+  const prog = getCurrentProgram();
+  return prog ? `Programa - ${prog.name}` : 'Grimm Waves Radio · en vivo';
+}
+
 function setPlayingUI(playing) {
   playIcon.innerHTML = playing
     ? '<rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/>'
     : '<path d="M8 5v14l11-7z"/>';
   playerWave.classList.toggle('paused', !playing);
-  playerStation.textContent = playing ? 'Grimm Waves Radio · en vivo' : 'Tocá play para escuchar en vivo';
+  playerStation.textContent = playing ? getProgramLabelText() : 'Tocá play para escuchar en vivo';
 }
 
 async function toggleStream() {
@@ -540,8 +568,10 @@ async function toggleStream() {
     if (isAdmin) { openConfigBtn.click(); } else { alert('La estación todavía no configuró el link del stream.'); }
     return;
   }
-  if (radioAudio.src !== currentConfig.streamUrl) radioAudio.src = currentConfig.streamUrl;
   if (radioAudio.paused) {
+    // Siempre reconecta de cero al stream en vivo (no retoma desde donde quedó pausado).
+    radioAudio.src = currentConfig.streamUrl;
+    radioAudio.load();
     playerStation.textContent = 'Conectando…';
     try {
       await radioAudio.play();
@@ -553,6 +583,8 @@ async function toggleStream() {
     }
   } else {
     radioAudio.pause();
+    radioAudio.removeAttribute('src');
+    radioAudio.load();
     setPlayingUI(false);
   }
 }
