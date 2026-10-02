@@ -9,12 +9,12 @@
 // login de Firebase Auth, no el hecho de que esto sea "secreto".
 // ─────────────────────────────────────────────────────────────
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "tu-proyecto.firebaseapp.com",
-  projectId: "tu-proyecto",
-  storageBucket: "tu-proyecto.appspot.com",
-  messagingSenderId: "TU_SENDER_ID",
-  appId: "TU_APP_ID"
+  apiKey: "AIzaSyA_0oJYQHbInyBz-MFmnaguysmiUsZvMzo",
+  authDomain: "grimm-waves.firebaseapp.com",
+  projectId: "grimm-waves",
+  storageBucket: "grimm-waves.firebasestorage.app",
+  messagingSenderId: "900481603887",
+  appId: "1:900481603887:web:bfaf1ae1e26d9f17a1e9da"
 };
 
 firebase.initializeApp(firebaseConfig);
