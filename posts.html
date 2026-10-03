@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Posts — Grimm Waves Radio</title>
+<link rel="icon" href="assets/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=2">
+</head>
+<body class="no-player">
+
+<header class="site-header">
+  <a class="brand" href="index.html" style="text-decoration:none; color:inherit;">
+    <img src="assets/logo.webp" alt="Grimm Waves Radio">
+    <span>Grimm Waves</span>
+  </a>
+  <nav class="main-nav">
+    <div class="navlinks-mobile-hide">
+      <a href="posts.html">Posts</a>
+      <a href="index.html#programacion">Programación</a>
+      <a href="index.html#footer-links">Escuchar</a>
+    </div>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menú" aria-expanded="false">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <div class="auth-area">
+      <button class="admin-btn" id="adminLoginBtn" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/></svg>
+        Admin
+      </button>
+      <div class="admin-pill" id="adminPill" hidden>
+        <span class="admin-pill-tag">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/></svg>
+          Editando como admin
+        </span>
+        <button class="admin-btn" id="logoutBtn" type="button">Salir</button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-nav-panel" id="mobileNavPanel">
+    <a href="posts.html">Posts</a>
+    <a href="index.html#programacion">Programación</a>
+    <a href="index.html#footer-links">Escuchar</a>
+  </div>
+</header>
+
+<div class="page-hero">
+  <h1>Todos los posts</h1>
+  <p>Novedades de la estación, lanzamientos y detrás de cámaras. Para publicar uno nuevo, entrá como admin desde la portada.</p>
+</div>
+
+<section>
+  <div class="wrap" style="padding-top: 20px;">
+    <div class="posts-all-grid" id="allPostsGrid">
+      <p class="empty-note">Cargando posts…</p>
+    </div>
+  </div>
+</section>
+
+<footer id="footer-links">
+  <div>
+    <div class="f-brand">
+      <img src="assets/logo.webp" alt="Grimm Waves Radio">
+      <span>Grimm Waves</span>
+    </div>
+    <p class="desc" id="footerDesc">Radio independiente transmitiendo las 24 horas. Sin filtros, sin máscaras.</p>
+  </div>
+  <div>
+    <h4>Escuchar</h4>
+    <ul>
+      <li><a href="#" id="footerStreamLink" target="_blank" rel="noopener">Stream directo</a></li>
+      <li><a href="index.html#programacion">Programación</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>Estación</h4>
+    <ul>
+      <li><a href="posts.html">Posts</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+      <li><a href="enviar-musica.html">Enviar música</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="foot-bottom">© 2026 Grimm Waves Radio</div>
+
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" data-close="loginModal" aria-label="Cerrar">✕</button>
+    <h3>Acceso administrador</h3>
+    <p class="sub">Gestioná la programación y los posts de la radio.</p>
+    <label for="loginEmail">Email</label>
+    <input type="email" id="loginEmail" placeholder="admin@grimmwaves.com">
+    <label for="loginPass">Contraseña</label>
+    <input type="password" id="loginPass" placeholder="••••••••">
+    <p class="login-status-msg" id="loginStatusMsg"></p>
+    <button class="btn-primary" id="loginSubmitBtn" type="button">Entrar</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/common.js"></script>
+<script src="js/posts-render.js"></script>
+<script src="js/posts-page.js"></script>
+</body>
+</html>

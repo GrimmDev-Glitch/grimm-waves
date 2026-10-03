@@ -6,8 +6,9 @@ const DAY_LABELS = { mon: 'Lunes', tue: 'Martes', wed: 'Miércoles', thu: 'Jueve
 
 const DEFAULT_CONFIG = {
   streamUrl: '',
+  listenPageUrl: 'https://zeno.fm/radio/grimm-waves/',
   nowPlayingApi: '',
-  azuraUrl: '',
+  stationDesc: 'Radio independiente transmitiendo las 24 horas. Sin filtros, sin máscaras.',
   onAirTitle: 'Grimm Waves Radio',
   onAirDesc: 'Configurá la estación desde el panel admin.',
   upNext: '—'
@@ -113,8 +114,9 @@ auth.onAuthStateChanged((user) => {
 // ---- Config de la estación ----
 openConfigBtn.addEventListener('click', () => {
   $('cfgStream').value = currentConfig.streamUrl || '';
+  $('cfgListenPage').value = currentConfig.listenPageUrl || '';
   $('cfgNowPlaying').value = currentConfig.nowPlayingApi || '';
-  $('cfgAzura').value = currentConfig.azuraUrl || '';
+  $('cfgStationDesc').value = currentConfig.stationDesc || '';
   $('cfgOnAirTitle').value = currentConfig.onAirTitle || '';
   $('cfgOnAirDesc').value = currentConfig.onAirDesc || '';
   $('cfgUpNext').value = currentConfig.upNext || '';
@@ -124,8 +126,9 @@ openConfigBtn.addEventListener('click', () => {
 saveConfigBtn.addEventListener('click', async () => {
   const updated = {
     streamUrl: $('cfgStream').value.trim(),
+    listenPageUrl: $('cfgListenPage').value.trim() || DEFAULT_CONFIG.listenPageUrl,
     nowPlayingApi: $('cfgNowPlaying').value.trim(),
-    azuraUrl: $('cfgAzura').value.trim(),
+    stationDesc: $('cfgStationDesc').value.trim() || DEFAULT_CONFIG.stationDesc,
     onAirTitle: $('cfgOnAirTitle').value.trim() || DEFAULT_CONFIG.onAirTitle,
     onAirDesc: $('cfgOnAirDesc').value.trim(),
     upNext: $('cfgUpNext').value.trim() || '—'
@@ -139,8 +142,8 @@ saveConfigBtn.addEventListener('click', async () => {
 });
 
 function applyConfigToUI() {
-  $('footerStreamLink').href = currentConfig.streamUrl || '#';
-  $('footerAzuraLink').href = currentConfig.azuraUrl || '#';
+  $('footerStreamLink').href = currentConfig.listenPageUrl || currentConfig.streamUrl || '#';
+  $('footerDesc').textContent = currentConfig.stationDesc;
   setupNowPlaying();
   updateOnAirUI();
 }
@@ -201,12 +204,27 @@ async function fetchNowPlayingAzura() {
   }
 }
 
+let pendingSongTimeout = null;
 function applyNowPlayingLabel(streamTitle) {
   let artist = '', title = String(streamTitle || '').trim();
   const parts = title.split(' - ');
   if (parts.length >= 2) { artist = parts[0].trim(); title = parts.slice(1).join(' - ').trim(); }
-  currentSongLabel = artist && title ? `${artist} — ${title}` : (title || artist);
-  updateOnAirUI();
+  const label = artist && title ? `${artist} — ${title}` : (title || artist);
+
+  if (!currentSongLabel) {
+    // Primera canción recibida: se muestra al toque, no hay nada previo que desincronizar.
+    currentSongLabel = label;
+    updateOnAirUI();
+    return;
+  }
+  // El aviso de "cambió la canción" llega un poco antes de que el audio (que viene
+  // con unos segundos de buffer) realmente llegue a ese punto. Lo retrasamos un poco
+  // para que se sienta más sincronizado con lo que se está escuchando.
+  clearTimeout(pendingSongTimeout);
+  pendingSongTimeout = setTimeout(() => {
+    currentSongLabel = label;
+    updateOnAirUI();
+  }, 6000);
 }
 
 // ---- "Sonando ahora": detecta el programa actual según la hora de Chile ----
@@ -295,32 +313,94 @@ function updateMediaSession(prog, trackLabel) {
 // Recalcula el programa actual cada minuto aunque no cambie la canción
 setInterval(updateOnAirUI, 60000);
 
-// ---- Posts ----
-function getYouTubeId(url) {
-  if (!url) return null;
-  const m = String(url).match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-  return m ? m[1] : null;
-}
-function getDomain(url) {
-  try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return url; }
-}
-function safeUrlAttr(url) { return escapeHtml(String(url || '')); }
+// ---- Subida de imágenes a GitHub (opcional) ----
+const GH_REPO_KEY = 'gw_gh_repo';
+const GH_TOKEN_KEY = 'gw_gh_token';
+const GH_BRANCH_KEY = 'gw_gh_branch';
 
-function mediaBlockHtml(p, featured) {
-  const ytId = getYouTubeId(p.videoUrl);
-  if (ytId && featured) {
-    return `<div class="post-media post-media-video"><iframe src="https://www.youtube-nocookie.com/embed/${ytId}" title="Video del post" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+const openGithubCfgBtn = $('openGithubCfgBtn');
+const saveGithubCfgBtn = $('saveGithubCfgBtn');
+
+openGithubCfgBtn.addEventListener('click', () => {
+  $('ghRepo').value = localStorage.getItem(GH_REPO_KEY) || '';
+  $('ghToken').value = localStorage.getItem(GH_TOKEN_KEY) || '';
+  $('ghBranch').value = localStorage.getItem(GH_BRANCH_KEY) || 'main';
+  $('ghCfgStatusMsg').textContent = '';
+  openModal('githubCfgModal');
+});
+
+saveGithubCfgBtn.addEventListener('click', () => {
+  const repo = $('ghRepo').value.trim();
+  const token = $('ghToken').value.trim();
+  const branch = $('ghBranch').value.trim() || 'main';
+  if (!repo || !token) { $('ghCfgStatusMsg').textContent = 'Completá repositorio y token.'; return; }
+  localStorage.setItem(GH_REPO_KEY, repo);
+  localStorage.setItem(GH_TOKEN_KEY, token);
+  localStorage.setItem(GH_BRANCH_KEY, branch);
+  closeModal('githubCfgModal');
+});
+
+async function uploadImageToGithub(file) {
+  const repo = localStorage.getItem(GH_REPO_KEY);
+  const token = localStorage.getItem(GH_TOKEN_KEY);
+  const branch = localStorage.getItem(GH_BRANCH_KEY) || 'main';
+  if (!repo || !token) {
+    throw new Error('NO_CONFIG');
   }
-  const bg = p.imageUrl || (ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : '');
-  if (!bg) return '<div class="post-media"></div>';
-  const mediaDiv = `<div class="post-media" style="background-image:url('${String(bg).replace(/['"]/g, '')}'); background-size:cover; background-position:center;"></div>`;
-  return p.imageUrl ? `<a href="${safeUrlAttr(p.imageUrl)}" target="_blank" rel="noopener" aria-label="Ver imagen completa">${mediaDiv}</a>` : mediaDiv;
+  const base64 = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+  const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+  const path = `assets/uploads/${Date.now()}_${safeName}`;
+
+  const res = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `token ${token}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/vnd.github+json'
+    },
+    body: JSON.stringify({ message: `Imagen de post: ${safeName}`, content: base64, branch })
+  });
+
+  if (!res.ok) {
+    const errBody = await res.json().catch(() => ({}));
+    console.error('GitHub upload error:', res.status, errBody);
+    throw new Error('GITHUB_' + res.status);
+  }
+  const data = await res.json();
+  return data.content.download_url;
 }
 
-function linkCardHtml(p) {
-  if (!p.linkUrl) return '';
-  return `<a class="post-link-card" href="${safeUrlAttr(p.linkUrl)}" target="_blank" rel="noopener">🔗 ${escapeHtml(getDomain(p.linkUrl))} <span>Visitar enlace →</span></a>`;
-}
+$('postImageFile').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const msgEl = $('postImageUploadMsg');
+  msgEl.style.color = 'var(--muted)';
+  msgEl.textContent = 'Subiendo imagen a GitHub…';
+  try {
+    const url = await uploadImageToGithub(file);
+    $('postImageUrl').value = url;
+    msgEl.style.color = 'var(--ember)';
+    msgEl.textContent = 'Imagen subida ✓ (puede tardar hasta un minuto en verse reflejada)';
+  } catch (err) {
+    msgEl.style.color = 'var(--blood-bright)';
+    if (err.message === 'NO_CONFIG') {
+      msgEl.textContent = 'Primero configurá el repo y el token (botón 📦 en el header).';
+    } else {
+      msgEl.textContent = 'No se pudo subir la imagen. Revisá el token/permisos en la consola.';
+    }
+  } finally {
+    e.target.value = '';
+  }
+});
+
+// ---- Posts ----
+// (getYouTubeId, getDomain, safeUrlAttr, mediaBlockHtml, linkCardHtml, escapeHtml, formatDate
+//  viven en js/posts-render.js, compartido con posts.html)
 
 function renderPosts() {
   const posts = Object.values(postsCache).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
@@ -329,7 +409,12 @@ function renderPosts() {
     return;
   }
   const [featured, ...rest] = posts;
-  const delBtn = (id) => `<div class="card-admin-actions"><button class="icon-del" data-del-post="${id}" aria-label="Eliminar post">✕</button></div>`;
+  const delBtn = (id) => `<div class="card-admin-actions">
+      <button class="icon-edit" data-edit-post="${id}" aria-label="Editar post">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+      </button>
+      <button class="icon-del" data-del-post="${id}" aria-label="Eliminar post">✕</button>
+    </div>`;
   let html = `
     <article class="post-card post-featured">
       ${mediaBlockHtml(featured, true)}
@@ -363,6 +448,9 @@ function renderPosts() {
   postsGrid.querySelectorAll('[data-del-post]').forEach(btn => {
     btn.addEventListener('click', () => deletePost(btn.dataset.delPost));
   });
+  postsGrid.querySelectorAll('[data-edit-post]').forEach(btn => {
+    btn.addEventListener('click', () => openPostModalForEdit(btn.dataset.editPost));
+  });
 }
 
 let postsCache = {};
@@ -375,9 +463,47 @@ db.collection('posts').onSnapshot(
   () => { postsCache = {}; renderPosts(); }
 );
 
-addPostBtn.addEventListener('click', () => openModal('postModal'));
-
 const postStatusMsg = $('postStatusMsg');
+const cancelEditPostBtn = $('cancelEditPostBtn');
+let editingPostId = null;
+
+function resetPostForm() {
+  $('postTag').value = ''; $('postTitle').value = ''; $('postExcerpt').value = '';
+  $('postVideoUrl').value = ''; $('postLinkUrl').value = ''; $('postImageUrl').value = '';
+  postStatusMsg.textContent = '';
+  $('postImageUploadMsg').textContent = '';
+}
+
+addPostBtn.addEventListener('click', () => {
+  editingPostId = null;
+  $('postModalTitle').textContent = 'Nuevo post';
+  savePostBtn.textContent = 'Publicar';
+  cancelEditPostBtn.hidden = true;
+  resetPostForm();
+  openModal('postModal');
+});
+
+function openPostModalForEdit(id) {
+  const p = postsCache[id];
+  if (!p) return;
+  editingPostId = id;
+  $('postModalTitle').textContent = 'Editar post';
+  savePostBtn.textContent = 'Guardar cambios';
+  cancelEditPostBtn.hidden = false;
+  $('postTag').value = p.tag || '';
+  $('postTitle').value = p.title || '';
+  $('postExcerpt').value = p.excerpt || '';
+  $('postVideoUrl').value = p.videoUrl || '';
+  $('postLinkUrl').value = p.linkUrl || '';
+  $('postImageUrl').value = p.imageUrl || '';
+  postStatusMsg.textContent = '';
+  openModal('postModal');
+}
+
+cancelEditPostBtn.addEventListener('click', () => {
+  editingPostId = null;
+  closeModal('postModal');
+});
 
 savePostBtn.addEventListener('click', async () => {
   const tag = $('postTag').value.trim() || 'Post';
@@ -385,23 +511,18 @@ savePostBtn.addEventListener('click', async () => {
   const excerpt = $('postExcerpt').value.trim();
   const videoUrl = $('postVideoUrl').value.trim();
   const linkUrl = $('postLinkUrl').value.trim();
-  const file = $('postImageFile').files[0];
+  const imageUrl = $('postImageUrl').value.trim();
   if (!title) { alert('Ponele un título al post.'); return; }
-  const id = 'p_' + Date.now();
+
+  const isEdit = !!editingPostId;
+  const id = editingPostId || ('p_' + Date.now());
+  const createdAt = isEdit ? (postsCache[id]?.createdAt || Date.now()) : Date.now();
+
   savePostBtn.disabled = true;
-  postStatusMsg.style.color = 'var(--muted)';
   try {
-    let imageUrl = '';
-    if (file) {
-      postStatusMsg.textContent = 'Subiendo imagen…';
-      const ref = storage.ref().child(`posts/${id}/${file.name}`);
-      await ref.put(file);
-      imageUrl = await ref.getDownloadURL();
-    }
-    postStatusMsg.textContent = '';
-    await db.collection('posts').doc(id).set({ tag, title, excerpt, videoUrl, linkUrl, imageUrl, createdAt: Date.now() });
-    $('postTag').value = ''; $('postTitle').value = ''; $('postExcerpt').value = '';
-    $('postVideoUrl').value = ''; $('postLinkUrl').value = ''; $('postImageFile').value = '';
+    await db.collection('posts').doc(id).set({ tag, title, excerpt, videoUrl, linkUrl, imageUrl, createdAt });
+    resetPostForm();
+    editingPostId = null;
     closeModal('postModal');
   } catch (err) {
     console.error('Error al publicar:', err);
@@ -552,7 +673,7 @@ async function deleteShow(id) {
 // ---- Reproductor real ----
 function getProgramLabelText() {
   const prog = getCurrentProgram();
-  return prog ? `Programa - ${prog.name}` : 'Grimm Waves Radio · en vivo';
+  return prog ? `Grimm Waves - Programa: ${prog.name}` : 'Grimm Waves Radio · en vivo';
 }
 
 function setPlayingUI(playing) {
@@ -614,12 +735,4 @@ function renderTzStrip() {
 renderTzStrip();
 tzInterval = setInterval(renderTzStrip, 30000);
 
-// ---- Utils ----
-function escapeHtml(str) {
-  return String(str).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
-function formatDate(ts) {
-  if (!ts) return '';
-  const d = new Date(ts);
-  return d.toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' });
-}
+

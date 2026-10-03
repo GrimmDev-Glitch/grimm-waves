@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=2">
 
 <!-- Open Graph -->
 <meta property="og:title" content="Grimm Waves Radio">
@@ -26,7 +26,7 @@
   </div>
   <nav class="main-nav">
     <div class="navlinks-mobile-hide">
-      <a href="#posts">Posts</a>
+      <a href="posts.html">Posts</a>
       <a href="#programacion">Programación</a>
       <a href="#footer-links">Escuchar</a>
     </div>
@@ -44,12 +44,13 @@
           Editando como admin
         </span>
         <button class="admin-btn" id="openConfigBtn" type="button" aria-label="Configuración de la estación">⚙</button>
+        <button class="admin-btn" id="openGithubCfgBtn" type="button" aria-label="Configurar subida de imágenes a GitHub">📦</button>
         <button class="admin-btn" id="logoutBtn" type="button">Salir</button>
       </div>
     </div>
   </nav>
   <div class="mobile-nav-panel" id="mobileNavPanel">
-    <a href="#posts">Posts</a>
+    <a href="posts.html">Posts</a>
     <a href="#programacion">Programación</a>
     <a href="#footer-links">Escuchar</a>
   </div>
@@ -133,22 +134,21 @@
       <img src="assets/logo.webp" alt="Grimm Waves Radio">
       <span>Grimm Waves</span>
     </div>
-    <p class="desc">Radio independiente transmitiendo las 24 horas. Sin filtros, sin máscaras.</p>
+    <p class="desc" id="footerDesc">Radio independiente transmitiendo las 24 horas. Sin filtros, sin máscaras.</p>
   </div>
   <div>
     <h4>Escuchar</h4>
     <ul>
       <li><a href="#" id="footerStreamLink" target="_blank" rel="noopener">Stream directo</a></li>
-      <li><a href="#" id="footerAzuraLink" target="_blank" rel="noopener">Panel AzuraCast</a></li>
       <li><a href="#programacion">Programación</a></li>
     </ul>
   </div>
   <div>
     <h4>Estación</h4>
     <ul>
-      <li><a href="#posts">Posts</a></li>
-      <li><a href="#">Contacto</a></li>
-      <li><a href="#">Enviar música</a></li>
+      <li><a href="posts.html">Posts</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+      <li><a href="enviar-musica.html">Enviar música</a></li>
     </ul>
   </div>
 </footer>
@@ -190,13 +190,15 @@
     <button class="modal-close" data-close="configModal" aria-label="Cerrar">✕</button>
     <h3>Configuración de la estación</h3>
     <p class="sub">Se guarda para todos los que visiten el sitio.</p>
-    <label for="cfgStream">URL directa del stream (audio)</label>
+    <label for="cfgStream">URL directa del stream (audio, para el reproductor)</label>
     <input type="text" id="cfgStream" placeholder="https://stream.zeno.fm/xxxxxxxx">
-    <label for="cfgNowPlaying">URL de Now Playing de AzuraCast (opcional)</label>
+    <label for="cfgListenPage">Link "Stream directo" del footer (página pública)</label>
+    <input type="text" id="cfgListenPage" placeholder="https://zeno.fm/radio/grimm-waves/">
+    <label for="cfgNowPlaying">URL de Now Playing de AzuraCast (opcional, si no usás Zeno)</label>
     <input type="text" id="cfgNowPlaying" placeholder="https://tu-azuracast.com/api/nowplaying/tu_estacion">
-    <label for="cfgAzura">Link del panel/stream de AzuraCast (opcional)</label>
-    <input type="text" id="cfgAzura" placeholder="https://tu-azuracast.com/public/tu_estacion">
-    <label for="cfgOnAirTitle">Programa al aire (si no hay Now Playing)</label>
+    <label for="cfgStationDesc">Descripción corta (footer)</label>
+    <input type="text" id="cfgStationDesc" placeholder="Radio independiente transmitiendo las 24 horas...">
+    <label for="cfgOnAirTitle">Programa al aire (si no hay programación cargada)</label>
     <input type="text" id="cfgOnAirTitle" placeholder="Sesión Nocturna con MK">
     <label for="cfgOnAirDesc">Descripción del programa al aire</label>
     <input type="text" id="cfgOnAirDesc" placeholder="Dark synth, industrial…">
@@ -206,10 +208,27 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="githubCfgModal">
+  <div class="modal">
+    <button class="modal-close" data-close="githubCfgModal" aria-label="Cerrar">✕</button>
+    <h3>Subida de imágenes a GitHub</h3>
+    <p class="sub">Esto se guarda solo en este navegador, nunca en el repo ni en Firestore.</p>
+    <label for="ghRepo">Repositorio (usuario/repo)</label>
+    <input type="text" id="ghRepo" placeholder="tu-usuario/grimm-waves">
+    <label for="ghToken">Token de acceso personal</label>
+    <input type="password" id="ghToken" placeholder="github_pat_xxxxxxxxxxxx">
+    <label for="ghBranch">Rama</label>
+    <input type="text" id="ghBranch" placeholder="main" value="main">
+    <p class="login-status-msg" id="ghCfgStatusMsg"></p>
+    <button class="btn-primary" id="saveGithubCfgBtn" type="button">Guardar</button>
+    <p class="modal-note">Generalo en GitHub → tu foto de perfil → Settings → Developer settings → Fine-grained tokens → "Only select repositories" (elegí este repo) → permiso "Contents: Read and write".</p>
+  </div>
+</div>
+
 <div class="modal-overlay" id="postModal">
   <div class="modal">
     <button class="modal-close" data-close="postModal" aria-label="Cerrar">✕</button>
-    <h3>Nuevo post</h3>
+    <h3 id="postModalTitle">Nuevo post</h3>
     <p class="sub">Se publica al instante para todos.</p>
     <label for="postTag">Etiqueta</label>
     <input type="text" id="postTag" placeholder="Anuncio, Comunidad, Programación…">
@@ -217,14 +236,18 @@
     <input type="text" id="postTitle" placeholder="Título del post">
     <label for="postExcerpt">Resumen</label>
     <input type="text" id="postExcerpt" placeholder="Dos líneas contando de qué se trata">
-    <label for="postImageFile">Imagen (opcional)</label>
+    <label for="postImageUrl">URL de imagen (opcional)</label>
+    <input type="text" id="postImageUrl" placeholder="https://... (se completa sola si subís un archivo abajo)">
+    <label for="postImageFile">O subí un archivo (se guarda en tu repo de GitHub)</label>
     <input type="file" id="postImageFile" accept="image/*">
+    <p class="login-status-msg" id="postImageUploadMsg"></p>
     <label for="postVideoUrl">Link de video (opcional, YouTube o similar)</label>
     <input type="text" id="postVideoUrl" placeholder="https://youtube.com/watch?v=...">
     <label for="postLinkUrl">Enlace externo (opcional)</label>
     <input type="text" id="postLinkUrl" placeholder="https://...">
     <p class="login-status-msg" id="postStatusMsg"></p>
     <button class="btn-primary" id="savePostBtn" type="button">Publicar</button>
+    <button class="btn-ghost" id="cancelEditPostBtn" type="button" hidden style="width:100%; justify-content:center; margin-top:10px;">Cancelar edición</button>
   </div>
 </div>
 
@@ -273,8 +296,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 <script src="js/firebase-config.js"></script>
-<script src="js/app.js"></script>
+<script src="js/posts-render.js?v=2"></script>
+<script src="js/app.js?v=2"></script>
 </body>
 </html>
