@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // Funciones compartidas para renderizar posts (imagen/video/enlace).
-// Usadas por js/app.js (home) y js/posts-page.js (posts.html).
+// Usadas por js/app.js (vista inicial) y js/posts-page.js (vista "Posts").
 // ─────────────────────────────────────────────────────────────
 
 function escapeHtml(str) {

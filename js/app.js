@@ -88,7 +88,7 @@ loginSubmitBtn.addEventListener('click', async () => {
   const email = $('loginEmail').value.trim();
   const pass = $('loginPass').value;
   loginStatusMsg.textContent = '';
-  if (!email || !pass) { loginStatusMsg.textContent = 'Completá email y contraseña.'; return; }
+  if (!email || !pass) { loginStatusMsg.textContent = 'Completa el email y la contraseña.'; return; }
   try {
     await auth.signInWithEmailAndPassword(email, pass);
     closeModal('loginModal');
@@ -109,6 +109,7 @@ auth.onAuthStateChanged((user) => {
   document.body.classList.toggle('is-admin', isAdmin);
   renderPosts();
   renderSchedule();
+  document.dispatchEvent(new CustomEvent('admin-state-changed', { detail: { isAdmin } }));
 });
 
 // ---- Config de la estación ----
@@ -137,7 +138,7 @@ saveConfigBtn.addEventListener('click', async () => {
     await db.doc('config/station').set(updated);
     closeModal('configModal');
   } catch (err) {
-    alert('No se pudo guardar. Revisá las reglas de Firestore y que hayas iniciado sesión.');
+    alert('No se pudo guardar. Revisa las reglas de Firestore y que hayas iniciado sesión.');
   }
 });
 
@@ -224,7 +225,7 @@ function applyNowPlayingLabel(streamTitle) {
   pendingSongTimeout = setTimeout(() => {
     currentSongLabel = label;
     updateOnAirUI();
-  }, 6000);
+  }, 2000);
 }
 
 // ---- "Sonando ahora": detecta el programa actual según la hora de Chile ----
@@ -333,7 +334,7 @@ saveGithubCfgBtn.addEventListener('click', () => {
   const repo = $('ghRepo').value.trim();
   const token = $('ghToken').value.trim();
   const branch = $('ghBranch').value.trim() || 'main';
-  if (!repo || !token) { $('ghCfgStatusMsg').textContent = 'Completá repositorio y token.'; return; }
+  if (!repo || !token) { $('ghCfgStatusMsg').textContent = 'Completa el repositorio y el token.'; return; }
   localStorage.setItem(GH_REPO_KEY, repo);
   localStorage.setItem(GH_TOKEN_KEY, token);
   localStorage.setItem(GH_BRANCH_KEY, branch);
@@ -391,7 +392,7 @@ $('postImageFile').addEventListener('change', async (e) => {
     if (err.message === 'NO_CONFIG') {
       msgEl.textContent = 'Primero configurá el repo y el token (botón 📦 en el header).';
     } else {
-      msgEl.textContent = 'No se pudo subir la imagen. Revisá el token/permisos en la consola.';
+      msgEl.textContent = 'No se pudo subir la imagen. Revisa el token/permisos en la consola.';
     }
   } finally {
     e.target.value = '';
@@ -400,7 +401,7 @@ $('postImageFile').addEventListener('change', async (e) => {
 
 // ---- Posts ----
 // (getYouTubeId, getDomain, safeUrlAttr, mediaBlockHtml, linkCardHtml, escapeHtml, formatDate
-//  viven en js/posts-render.js, compartido con posts.html)
+//  viven en js/posts-render.js, compartido con la vista "Posts")
 
 function renderPosts() {
   const posts = Object.values(postsCache).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
@@ -527,7 +528,7 @@ savePostBtn.addEventListener('click', async () => {
   } catch (err) {
     console.error('Error al publicar:', err);
     postStatusMsg.style.color = 'var(--blood-bright)';
-    postStatusMsg.textContent = 'No se pudo publicar. Revisá la consola o las reglas de Firebase.';
+    postStatusMsg.textContent = 'No se pudo publicar. Revisa la consola o las reglas de Firebase.';
   } finally {
     savePostBtn.disabled = false;
   }
@@ -649,8 +650,8 @@ saveShowBtn.addEventListener('click', async () => {
   const days = Array.from($('daysChecks').querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
   const statusEl = $('showStatusMsg');
 
-  if (!name || !startTime || !endTime) { statusEl.style.color = 'var(--blood-bright)'; statusEl.textContent = 'Completá nombre, hora de inicio y de fin.'; return; }
-  if (!days.length) { statusEl.style.color = 'var(--blood-bright)'; statusEl.textContent = 'Elegí al menos un día.'; return; }
+  if (!name || !startTime || !endTime) { statusEl.style.color = 'var(--blood-bright)'; statusEl.textContent = 'Completa el nombre, la hora de inicio y la de fin.'; return; }
+  if (!days.length) { statusEl.style.color = 'var(--blood-bright)'; statusEl.textContent = 'Elige al menos un día.'; return; }
 
   const id = editingShowId || ('s_' + Date.now());
   try {
@@ -660,7 +661,7 @@ saveShowBtn.addEventListener('click', async () => {
   } catch (err) {
     console.error('Error al guardar el programa:', err);
     statusEl.style.color = 'var(--blood-bright)';
-    statusEl.textContent = 'No se pudo guardar. Revisá las reglas de Firestore.';
+    statusEl.textContent = 'No se pudo guardar. Revisa las reglas de Firestore.';
   }
 });
 
@@ -681,7 +682,7 @@ function setPlayingUI(playing) {
     ? '<rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/>'
     : '<path d="M8 5v14l11-7z"/>';
   playerWave.classList.toggle('paused', !playing);
-  playerStation.textContent = playing ? getProgramLabelText() : 'Tocá play para escuchar en vivo';
+  playerStation.textContent = playing ? getProgramLabelText() : 'Toca play para escuchar en vivo';
 }
 
 async function toggleStream() {
@@ -700,7 +701,7 @@ async function toggleStream() {
     } catch (err) {
       console.error('No se pudo reproducir el stream:', err);
       setPlayingUI(false);
-      playerStation.textContent = 'No se pudo reproducir el stream. Probá de nuevo.';
+      playerStation.textContent = 'No se pudo reproducir el stream. Intenta de nuevo.';
     }
   } else {
     radioAudio.pause();

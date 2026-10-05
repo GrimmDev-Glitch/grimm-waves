@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=2">
+<link rel="stylesheet" href="css/style.css?v=3">
 
 <!-- Open Graph -->
 <meta property="og:title" content="Grimm Waves Radio">
@@ -20,13 +20,13 @@
 <body>
 
 <header class="site-header">
-  <div class="brand">
+  <a class="brand" href="#" style="text-decoration:none; color:inherit;">
     <img src="assets/logo.webp" alt="Grimm Waves Radio">
     <span>Grimm Waves</span>
-  </div>
+  </a>
   <nav class="main-nav">
     <div class="navlinks-mobile-hide">
-      <a href="posts.html">Posts</a>
+      <a href="#view-posts">Posts</a>
       <a href="#programacion">Programación</a>
       <a href="#footer-links">Escuchar</a>
     </div>
@@ -50,12 +50,13 @@
     </div>
   </nav>
   <div class="mobile-nav-panel" id="mobileNavPanel">
-    <a href="posts.html">Posts</a>
+    <a href="#view-posts">Posts</a>
     <a href="#programacion">Programación</a>
     <a href="#footer-links">Escuchar</a>
   </div>
 </header>
 
+<main id="view-home" class="view">
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-inner">
@@ -127,6 +128,117 @@
     </div>
   </div>
 </section>
+</main>
+
+<main id="view-posts" class="view" hidden>
+  <div class="page-hero">
+    <h1>Todos los posts</h1>
+    <p>Novedades de la estación, lanzamientos y detrás de cámaras.</p>
+  </div>
+  <section>
+    <div class="wrap" style="padding-top: 20px;">
+      <div class="posts-all-grid" id="allPostsGrid">
+        <p class="empty-note">Cargando posts…</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<main id="view-contacto" class="view" hidden>
+  <div class="page-hero">
+    <h1>Contacto</h1>
+    <p>Escríbenos por donde te quede más cómodo, o mándanos un mensaje directo.</p>
+  </div>
+  <section>
+    <div class="wrap" style="padding-top: 0;">
+      <div class="contact-list" id="contactList"></div>
+
+      <div class="admin-edit-panel admin-only" id="contactEditPanel">
+        <h4 style="margin:0 0 14px; font-family:var(--font-display); font-size:1rem;">Editar redes de contacto</h4>
+        <label for="cEmail">Email</label>
+        <input type="text" id="cEmail" placeholder="contacto@grimmwaves.com">
+        <label for="cInstagram">Instagram (link completo)</label>
+        <input type="text" id="cInstagram" placeholder="https://instagram.com/grimmwaves">
+        <label for="cTiktok">TikTok (link completo)</label>
+        <input type="text" id="cTiktok" placeholder="https://tiktok.com/@grimmwaves">
+        <label for="cTwitch">Twitch (link completo)</label>
+        <input type="text" id="cTwitch" placeholder="https://twitch.tv/grimmwaves">
+        <label for="cDiscord">Discord (link de invitación)</label>
+        <input type="text" id="cDiscord" placeholder="https://discord.gg/xxxxx">
+        <label for="cTwitter">X / Twitter (link completo)</label>
+        <input type="text" id="cTwitter" placeholder="https://x.com/grimmwaves">
+        <p class="login-status-msg" id="contactStatusMsg"></p>
+        <button class="btn-primary" id="saveContactBtn" type="button">Guardar</button>
+      </div>
+
+      <div class="section-head" style="margin-top:48px;">
+        <h2>Enviános un mensaje</h2>
+        <p>Te leemos apenas podamos.</p>
+      </div>
+      <div class="admin-edit-panel" style="max-width:480px;">
+        <label for="msgName">Nombre</label>
+        <input type="text" id="msgName" placeholder="Tu nombre">
+        <label for="msgEmail">Email</label>
+        <input type="text" id="msgEmail" placeholder="tu@email.com">
+        <label for="msgText">Mensaje</label>
+        <textarea id="msgText" rows="4" placeholder="Escribí tu mensaje acá"></textarea>
+        <p class="login-status-msg" id="msgStatusMsg"></p>
+        <button class="btn-primary" id="sendMsgBtn" type="button">Enviar mensaje</button>
+      </div>
+
+      <div class="admin-section admin-only" id="messagesAdminSection" style="margin-top:48px;">
+        <div class="section-head">
+          <h2>Mensajes recibidos</h2>
+          <p>Solo tú ves esta lista.</p>
+        </div>
+        <div id="messagesList"><p class="empty-note">Cargando mensajes…</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<main id="view-enviar" class="view" hidden>
+  <div class="page-hero">
+    <h1>Enviar música</h1>
+    <p>¿Quieres que suene tu música en Grimm Waves? Así es como mandarla.</p>
+  </div>
+  <section>
+    <div class="wrap" style="padding-top: 0;">
+      <div class="prose-block" id="submitContent">Cargando…</div>
+
+      <div class="admin-edit-panel admin-only" id="submitEditPanel">
+        <h4 style="margin:0 0 14px; font-family:var(--font-display); font-size:1rem;">Editar instrucciones</h4>
+        <label for="submitText">Instrucciones (se muestran tal cual, respeta los saltos de línea)</label>
+        <textarea id="submitText" rows="6" placeholder="Ej: Mándanos tu música por Discord en #demos..."></textarea>
+        <p class="login-status-msg" id="submitStatusMsg"></p>
+        <button class="btn-primary" id="saveSubmitBtn" type="button">Guardar</button>
+      </div>
+
+      <div class="section-head" style="margin-top:48px;">
+        <h2>Pedir una canción</h2>
+        <p>Mándanos tu pedido y lo sumamos a la cola.</p>
+      </div>
+      <div class="admin-edit-panel" style="max-width:480px;">
+        <label for="reqName">Tu nombre</label>
+        <input type="text" id="reqName" placeholder="Tu nombre o usuario">
+        <label for="reqSong">Canción / artista</label>
+        <input type="text" id="reqSong" placeholder="Ej: KANA-BOON - シルエット">
+        <label for="reqNote">Nota (opcional)</label>
+        <input type="text" id="reqNote" placeholder="Link de Spotify/YouTube, dedicatoria, etc.">
+        <p class="login-status-msg" id="reqStatusMsg"></p>
+        <button class="btn-primary" id="sendReqBtn" type="button">Pedir canción</button>
+      </div>
+
+      <div class="admin-section admin-only" id="requestsAdminSection" style="margin-top:48px;">
+        <div class="section-head">
+          <h2>Pedidos recibidos</h2>
+          <p>Solo tú ves esta lista.</p>
+        </div>
+        <div id="requestsList"><p class="empty-note">Cargando pedidos…</p></div>
+      </div>
+    </div>
+  </section>
+</main>
 
 <footer id="footer-links">
   <div>
@@ -146,9 +258,9 @@
   <div>
     <h4>Estación</h4>
     <ul>
-      <li><a href="posts.html">Posts</a></li>
-      <li><a href="contacto.html">Contacto</a></li>
-      <li><a href="enviar-musica.html">Enviar música</a></li>
+      <li><a href="#view-posts">Posts</a></li>
+      <li><a href="#view-contacto">Contacto</a></li>
+      <li><a href="#view-enviar">Enviar música</a></li>
     </ul>
   </div>
 </footer>
@@ -160,7 +272,7 @@
   </button>
   <div class="player-info">
     <div class="track" id="playerTrack">Grimm Waves Radio</div>
-    <div class="station" id="playerStation">Tocá play para escuchar en vivo</div>
+    <div class="station" id="playerStation">Toca play para escuchar en vivo</div>
   </div>
   <audio id="radioAudio" preload="none"></audio>
   <div class="player-wave paused" id="playerWave"><span></span><span></span><span></span><span></span><span></span></div>
@@ -194,7 +306,7 @@
     <input type="text" id="cfgStream" placeholder="https://stream.zeno.fm/xxxxxxxx">
     <label for="cfgListenPage">Link "Stream directo" del footer (página pública)</label>
     <input type="text" id="cfgListenPage" placeholder="https://zeno.fm/radio/grimm-waves/">
-    <label for="cfgNowPlaying">URL de Now Playing de AzuraCast (opcional, si no usás Zeno)</label>
+    <label for="cfgNowPlaying">URL de Now Playing de AzuraCast (opcional, si no usas Zeno)</label>
     <input type="text" id="cfgNowPlaying" placeholder="https://tu-azuracast.com/api/nowplaying/tu_estacion">
     <label for="cfgStationDesc">Descripción corta (footer)</label>
     <input type="text" id="cfgStationDesc" placeholder="Radio independiente transmitiendo las 24 horas...">
@@ -221,7 +333,7 @@
     <input type="text" id="ghBranch" placeholder="main" value="main">
     <p class="login-status-msg" id="ghCfgStatusMsg"></p>
     <button class="btn-primary" id="saveGithubCfgBtn" type="button">Guardar</button>
-    <p class="modal-note">Generalo en GitHub → tu foto de perfil → Settings → Developer settings → Fine-grained tokens → "Only select repositories" (elegí este repo) → permiso "Contents: Read and write".</p>
+    <p class="modal-note">Genéralo en GitHub → tu foto de perfil → Settings → Developer settings → Fine-grained tokens → "Only select repositories" (elige este repo) → permiso "Contents: Read and write".</p>
   </div>
 </div>
 
@@ -237,8 +349,8 @@
     <label for="postExcerpt">Resumen</label>
     <input type="text" id="postExcerpt" placeholder="Dos líneas contando de qué se trata">
     <label for="postImageUrl">URL de imagen (opcional)</label>
-    <input type="text" id="postImageUrl" placeholder="https://... (se completa sola si subís un archivo abajo)">
-    <label for="postImageFile">O subí un archivo (se guarda en tu repo de GitHub)</label>
+    <input type="text" id="postImageUrl" placeholder="https://... (se completa sola si subes un archivo abajo)">
+    <label for="postImageFile">O sube un archivo (se guarda en tu repo de GitHub)</label>
     <input type="file" id="postImageFile" accept="image/*">
     <p class="login-status-msg" id="postImageUploadMsg"></p>
     <label for="postVideoUrl">Link de video (opcional, YouTube o similar)</label>
@@ -297,7 +409,11 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js"></script>
-<script src="js/posts-render.js?v=2"></script>
-<script src="js/app.js?v=2"></script>
+<script src="js/posts-render.js?v=3"></script>
+<script src="js/app.js?v=3"></script>
+<script src="js/posts-page.js?v=3"></script>
+<script src="js/contact-page.js?v=3"></script>
+<script src="js/submit-page.js?v=3"></script>
+<script src="js/router.js?v=3"></script>
 </body>
 </html>
