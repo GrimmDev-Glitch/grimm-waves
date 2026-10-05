@@ -73,6 +73,17 @@ Ese token queda guardado **solo en el almacenamiento local de ese navegador** �
 
 Las imágenes subidas así quedan guardadas en la carpeta `assets/uploads/` del repositorio, y tardan hasta un minuto en verse reflejadas (GitHub tarda un poco en servir un archivo recién subido).
 
+## La sección "En vivo" (Twitch, X/Twitter, redes)
+
+Nueva sección (`#view-vivo`) con:
+- **Twitch embebido**: el reproductor oficial de Twitch, incrustado directo en el sitio. Arranca silenciado y sin autoplay a propósito, para que no se mezcle con el audio de la radio si alguien está escuchando.
+- **Timeline de X/Twitter**: los últimos tuits de la cuenta que cargues, con el widget oficial de Twitter.
+- **Botones de seguimiento**: Twitch, X/Twitter, Instagram y TikTok — el que no cargues, simplemente no aparece.
+
+Como admin, el panel para cargar esto está al final de esa misma sección. Los datos quedan en `config/social` (ya cubierto por las reglas genéricas de `config/{docId}`, no hace falta tocar `firestore.rules`).
+
+Un detalle técnico sobre Twitch: el embed exige que el dominio donde vive la página esté autorizado (lo arma el propio código, usando el dominio real donde esté publicado el sitio, así que no hay que configurar nada aparte — pero si algún día se usa un dominio propio en vez del de GitHub Pages, el embed se sigue ajustando solo).
+
 ## Las secciones Posts, Contacto y Enviar música
 
 Ya no son páginas separadas — son secciones de la misma `index.html` que se muestran con los links `#view-posts`, `#view-contacto` y `#view-enviar` del menú.

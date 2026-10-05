@@ -4,8 +4,13 @@
 // se recarga ni se corta la música al navegar entre secciones).
 // ─────────────────────────────────────────────────────────────
 
-const VIEWS = ['view-home', 'view-posts', 'view-contacto', 'view-enviar'];
-const VIEW_ROUTES = { 'view-posts': 'view-posts', 'view-contacto': 'view-contacto', 'view-enviar': 'view-enviar' };
+const VIEWS = ['view-home', 'view-posts', 'view-contacto', 'view-enviar', 'view-vivo'];
+const VIEW_ROUTES = {
+  'view-posts': 'view-posts',
+  'view-contacto': 'view-contacto',
+  'view-enviar': 'view-enviar',
+  'view-vivo': 'view-vivo'
+};
 
 function showView(id) {
   VIEWS.forEach(v => {

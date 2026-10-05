@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=3">
+<link rel="stylesheet" href="css/style.css?v=4">
 
 <!-- Open Graph -->
 <meta property="og:title" content="Grimm Waves Radio">
@@ -28,6 +28,7 @@
     <div class="navlinks-mobile-hide">
       <a href="#view-posts">Posts</a>
       <a href="#programacion">Programación</a>
+      <a href="#view-vivo">En vivo</a>
       <a href="#footer-links">Escuchar</a>
     </div>
     <button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menú" aria-expanded="false">
@@ -52,6 +53,7 @@
   <div class="mobile-nav-panel" id="mobileNavPanel">
     <a href="#view-posts">Posts</a>
     <a href="#programacion">Programación</a>
+    <a href="#view-vivo">En vivo</a>
     <a href="#footer-links">Escuchar</a>
   </div>
 </header>
@@ -115,7 +117,7 @@
     </div>
     <div class="tz-strip" id="tzStrip"></div>
     <div class="day-tabs" id="dayTabs">
-      <button class="day-tab active" data-day="mon">Lunes</button>
+      <button class="day-tab" data-day="mon">Lunes</button>
       <button class="day-tab" data-day="tue">Martes</button>
       <button class="day-tab" data-day="wed">Miércoles</button>
       <button class="day-tab" data-day="thu">Jueves</button>
@@ -240,6 +242,45 @@
   </section>
 </main>
 
+<main id="view-vivo" class="view" hidden>
+  <div class="page-hero">
+    <h1>En vivo</h1>
+    <p>Mirá el stream, seguinos en redes y enterate de todo.</p>
+  </div>
+  <section>
+    <div class="wrap" style="padding-top: 0;">
+
+      <div class="twitch-embed-wrap" id="twitchEmbedWrap">
+        <p class="empty-note">Configurá el canal de Twitch desde el panel admin para que aparezca acá.</p>
+      </div>
+
+      <div class="social-follow-row" id="socialFollowRow"></div>
+
+      <div class="section-head" style="margin-top:48px;">
+        <h2>Últimos tuits</h2>
+      </div>
+      <div class="twitter-embed-wrap" id="twitterEmbedWrap">
+        <p class="empty-note">Configurá el usuario de X/Twitter desde el panel admin para que aparezca acá.</p>
+      </div>
+
+      <div class="admin-edit-panel admin-only" id="socialEditPanel" style="margin-top:48px;">
+        <h4 style="margin:0 0 14px; font-family:var(--font-display); font-size:1rem;">Editar redes y stream</h4>
+        <label for="socTwitch">Usuario de Twitch (sin twitch.tv/)</label>
+        <input type="text" id="socTwitch" placeholder="grimmwaves">
+        <label for="socTwitter">Usuario de X/Twitter (sin @ ni x.com/)</label>
+        <input type="text" id="socTwitter" placeholder="grimmwaves">
+        <label for="socInstagram">Instagram (link completo)</label>
+        <input type="text" id="socInstagram" placeholder="https://instagram.com/grimmwaves">
+        <label for="socTiktok">TikTok (link completo)</label>
+        <input type="text" id="socTiktok" placeholder="https://tiktok.com/@grimmwaves">
+        <p class="login-status-msg" id="socialStatusMsg"></p>
+        <button class="btn-primary" id="saveSocialBtn" type="button">Guardar</button>
+      </div>
+
+    </div>
+  </section>
+</main>
+
 <footer id="footer-links">
   <div>
     <div class="f-brand">
@@ -259,6 +300,7 @@
     <h4>Estación</h4>
     <ul>
       <li><a href="#view-posts">Posts</a></li>
+      <li><a href="#view-vivo">En vivo</a></li>
       <li><a href="#view-contacto">Contacto</a></li>
       <li><a href="#view-enviar">Enviar música</a></li>
     </ul>
@@ -414,6 +456,8 @@
 <script src="js/posts-page.js?v=3"></script>
 <script src="js/contact-page.js?v=3"></script>
 <script src="js/submit-page.js?v=3"></script>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<script src="js/live-page.js?v=1"></script>
 <script src="js/router.js?v=3"></script>
 </body>
 </html>
