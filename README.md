@@ -48,16 +48,19 @@ Con eso: cualquiera puede leer los posts/programación (son públicos), pero sol
 2. En el repositorio: **Settings → Pages** → en "Build and deployment" elige **Deploy from a branch**, rama `main`, carpeta `/ (root)`. Guarda.
 3. Espera un par de minutos — GitHub dará la URL pública (`https://tu-usuario.github.io/tu-repo/`).
 
-## Posts con imagen, video o enlace
+## Posts tipo blog: contenido completo, varias imágenes, video o enlace
 
-Al crear o editar un post desde el panel admin (botón ✏️ en cada post) se puede sumar, de forma opcional:
-- **Imagen**: dos formas —
+Cada post tiene ahora una página propia (se abre haciendo clic en cualquier parte de la tarjeta, en `#post/<id>`). Al crear o editar un post desde el panel admin (botón ✏️) hay estos campos:
+
+- **Resumen**: el texto corto que se ve en la vista previa (tarjetas de la portada y del listado).
+- **Contenido completo**: el texto largo del post, el que se lee al abrirlo. Se puede escribir todo lo que haga falta — dejando una línea en blanco se arma un párrafo nuevo.
+- **Imágenes**: se pueden cargar varias, una URL por línea (la primera es la que se usa como portada en las tarjetas). Dos formas de cargarlas —
   1. Pegar directamente la URL de una imagen ya subida a algún lado (imgur, etc.)
-  2. Subir un archivo: se guarda como un commit en el propio repositorio de GitHub, usando la API de GitHub desde el navegador. Necesita configuración previa (ver abajo), una sola vez.
-- **Video**: pega un link de YouTube — se embebe directo en el post destacado, y se usa su miniatura en los posts chicos.
+  2. Subir un archivo: se agrega solo a la lista de arriba, guardándose como un commit en el propio repositorio de GitHub. Necesita configuración previa (ver abajo), una sola vez.
+- **Video**: pega un link de YouTube — se embebe directo en la página del post, y se usa su miniatura en las tarjetas de vista previa.
 - **Enlace externo**: se muestra como una tarjeta con el dominio, que abre el link en una pestaña nueva.
 
-Ninguno es obligatorio — un post puede ser solo texto. El botón ✏️ también sirve para corregir un post ya publicado.
+Ninguno es obligatorio salvo el título — un post puede ser solo texto. El botón ✏️ (tanto en las tarjetas como dentro de la página del post) sirve para corregir un post ya publicado.
 
 ### Configurar la subida de imágenes a GitHub (opcional, una sola vez)
 

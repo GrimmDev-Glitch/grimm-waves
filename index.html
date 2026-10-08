@@ -281,6 +281,15 @@
   </section>
 </main>
 
+<main id="view-post-detail" class="view" hidden>
+  <div class="wrap">
+    <a href="#view-posts" class="post-detail-back">← Volver a posts</a>
+    <div id="postDetailContent">
+      <p class="empty-note">Cargando…</p>
+    </div>
+  </div>
+</main>
+
 <footer id="footer-links">
   <div>
     <div class="f-brand">
@@ -380,7 +389,7 @@
 </div>
 
 <div class="modal-overlay" id="postModal">
-  <div class="modal">
+  <div class="modal modal-wide">
     <button class="modal-close" data-close="postModal" aria-label="Cerrar">✕</button>
     <h3 id="postModalTitle">Nuevo post</h3>
     <p class="sub">Se publica al instante para todos.</p>
@@ -388,11 +397,13 @@
     <input type="text" id="postTag" placeholder="Anuncio, Comunidad, Programación…">
     <label for="postTitle">Título</label>
     <input type="text" id="postTitle" placeholder="Título del post">
-    <label for="postExcerpt">Resumen</label>
+    <label for="postExcerpt">Resumen (se ve en la vista previa, dos líneas)</label>
     <input type="text" id="postExcerpt" placeholder="Dos líneas contando de qué se trata">
-    <label for="postImageUrl">URL de imagen (opcional)</label>
-    <input type="text" id="postImageUrl" placeholder="https://... (se completa sola si subes un archivo abajo)">
-    <label for="postImageFile">O sube un archivo (se guarda en tu repo de GitHub)</label>
+    <label for="postBody">Contenido completo (se ve al abrir el post)</label>
+    <textarea id="postBody" rows="10" placeholder="Escribí el post completo acá. Dejá una línea en blanco entre párrafos." style="width:100%; background:var(--bg); border:1px solid var(--line); color:var(--bone); padding:11px 14px; border-radius:4px; font-family:var(--font-body); margin-bottom:18px; resize:vertical;"></textarea>
+    <label for="postImagesText">URLs de imágenes (opcional, una por línea)</label>
+    <textarea id="postImagesText" rows="3" placeholder="https://...&#10;https://... (una por línea, la primera es la de portada)" style="width:100%; background:var(--bg); border:1px solid var(--line); color:var(--bone); padding:11px 14px; border-radius:4px; font-family:var(--font-body); margin-bottom:10px; resize:vertical;"></textarea>
+    <label for="postImageFile">O sube un archivo (se agrega a la lista de arriba, se guarda en tu repo de GitHub)</label>
     <input type="file" id="postImageFile" accept="image/*">
     <p class="login-status-msg" id="postImageUploadMsg"></p>
     <label for="postVideoUrl">Link de video (opcional, YouTube o similar)</label>
@@ -451,13 +462,13 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js"></script>
-<script src="js/posts-render.js?v=3"></script>
-<script src="js/app.js?v=3"></script>
-<script src="js/posts-page.js?v=3"></script>
+<script src="js/posts-render.js?v=4"></script>
+<script src="js/app.js?v=4"></script>
+<script src="js/posts-page.js?v=4"></script>
 <script src="js/contact-page.js?v=3"></script>
 <script src="js/submit-page.js?v=3"></script>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <script src="js/live-page.js?v=1"></script>
-<script src="js/router.js?v=3"></script>
+<script src="js/router.js?v=4"></script>
 </body>
 </html>

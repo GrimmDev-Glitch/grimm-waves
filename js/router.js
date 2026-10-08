@@ -4,7 +4,7 @@
 // se recarga ni se corta la música al navegar entre secciones).
 // ─────────────────────────────────────────────────────────────
 
-const VIEWS = ['view-home', 'view-posts', 'view-contacto', 'view-enviar', 'view-vivo'];
+const VIEWS = ['view-home', 'view-posts', 'view-contacto', 'view-enviar', 'view-vivo', 'view-post-detail'];
 const VIEW_ROUTES = {
   'view-posts': 'view-posts',
   'view-contacto': 'view-contacto',
@@ -21,6 +21,14 @@ function showView(id) {
 
 function handleRoute() {
   const hash = location.hash.replace(/^#/, '');
+
+  const postMatch = hash.match(/^post\/(.+)$/);
+  if (postMatch) {
+    showView('view-post-detail');
+    window.scrollTo(0, 0);
+    if (typeof showPostDetail === 'function') showPostDetail(decodeURIComponent(postMatch[1]));
+    return;
+  }
 
   if (VIEW_ROUTES[hash]) {
     showView(hash);

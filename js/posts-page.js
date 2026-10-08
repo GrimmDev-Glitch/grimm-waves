@@ -8,7 +8,7 @@ function renderAllPosts() {
     return;
   }
   allPostsGrid.innerHTML = list.map(p => `
-    <article class="post-card post-all-card">
+    <article class="post-card post-all-card" data-post-card="${p.id}">
       ${mediaBlockHtml(p, false)}
       <div class="post-body">
         <span class="post-tag">${escapeHtml(p.tag || 'Post')}</span>
@@ -19,6 +19,7 @@ function renderAllPosts() {
       </div>
     </article>
   `).join('');
+  if (typeof postCardClickWiring === 'function') postCardClickWiring(allPostsGrid);
 }
 
 db.collection('posts').onSnapshot(

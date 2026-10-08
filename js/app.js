@@ -378,32 +378,18 @@ async function uploadImageToGithub(file) {
   return data.content.download_url;
 }
 
-$('postImageFile').addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const msgEl = $('postImageUploadMsg');
-  msgEl.style.color = 'var(--muted)';
-  msgEl.textContent = 'Subiendo imagen a GitHub…';
-  try {
-    const url = await uploadImageToGithub(file);
-    $('postImageUrl').value = url;
-    msgEl.style.color = 'var(--ember)';
-    msgEl.textContent = 'Imagen subida ✓ (puede tardar hasta un minuto en verse reflejada)';
-  } catch (err) {
-    msgEl.style.color = 'var(--blood-bright)';
-    if (err.message === 'NO_CONFIG') {
-      msgEl.textContent = 'Primero configurá el repo y el token (botón 📦 en el header).';
-    } else {
-      msgEl.textContent = 'No se pudo subir la imagen. Revisa el token/permisos en la consola.';
-    }
-  } finally {
-    e.target.value = '';
-  }
-});
-
 // ---- Posts ----
-// (getYouTubeId, getDomain, safeUrlAttr, mediaBlockHtml, linkCardHtml, escapeHtml, formatDate
-//  viven en js/posts-render.js, compartido con la vista "Posts")
+// (getYouTubeId, getDomain, safeUrlAttr, mediaBlockHtml, linkCardHtml, renderBodyHtml,
+//  renderDetailImages, getAllImages, escapeHtml, formatDate viven en js/posts-render.js)
+
+function postCardClickWiring(container) {
+  container.querySelectorAll('[data-post-card]').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.card-admin-actions') || e.target.closest('[data-stop-card-nav]')) return;
+      location.hash = '#post/' + encodeURIComponent(card.dataset.postCard);
+    });
+  });
+}
 
 function renderPosts() {
   const posts = Object.values(postsCache).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
@@ -419,7 +405,7 @@ function renderPosts() {
       <button class="icon-del" data-del-post="${id}" aria-label="Eliminar post">✕</button>
     </div>`;
   let html = `
-    <article class="post-card post-featured">
+    <article class="post-card post-featured" data-post-card="${featured.id}">
       ${mediaBlockHtml(featured, true)}
       <div class="post-body">
         <span class="post-tag">${escapeHtml(featured.tag || 'Post')}</span>
@@ -434,7 +420,7 @@ function renderPosts() {
   `;
   rest.slice(0, 4).forEach(p => {
     html += `
-      <article class="post-card post-small">
+      <article class="post-card post-small" data-post-card="${p.id}">
         ${mediaBlockHtml(p, false)}
         <div class="post-body">
           <span class="post-tag">${escapeHtml(p.tag || 'Post')}</span>
@@ -449,11 +435,12 @@ function renderPosts() {
   html += '</div>';
   postsGrid.innerHTML = html;
   postsGrid.querySelectorAll('[data-del-post]').forEach(btn => {
-    btn.addEventListener('click', () => deletePost(btn.dataset.delPost));
+    btn.addEventListener('click', (e) => { e.stopPropagation(); deletePost(btn.dataset.delPost); });
   });
   postsGrid.querySelectorAll('[data-edit-post]').forEach(btn => {
-    btn.addEventListener('click', () => openPostModalForEdit(btn.dataset.editPost));
+    btn.addEventListener('click', (e) => { e.stopPropagation(); openPostModalForEdit(postsCache[btn.dataset.editPost]); });
   });
+  postCardClickWiring(postsGrid);
 }
 
 let postsCache = {};
@@ -472,7 +459,8 @@ let editingPostId = null;
 
 function resetPostForm() {
   $('postTag').value = ''; $('postTitle').value = ''; $('postExcerpt').value = '';
-  $('postVideoUrl').value = ''; $('postLinkUrl').value = ''; $('postImageUrl').value = '';
+  $('postBody').value = ''; $('postImagesText').value = '';
+  $('postVideoUrl').value = ''; $('postLinkUrl').value = '';
   postStatusMsg.textContent = '';
   $('postImageUploadMsg').textContent = '';
 }
@@ -486,20 +474,21 @@ addPostBtn.addEventListener('click', () => {
   openModal('postModal');
 });
 
-function openPostModalForEdit(id) {
-  const p = postsCache[id];
+function openPostModalForEdit(p) {
   if (!p) return;
-  editingPostId = id;
+  editingPostId = p.id;
   $('postModalTitle').textContent = 'Editar post';
   savePostBtn.textContent = 'Guardar cambios';
   cancelEditPostBtn.hidden = false;
   $('postTag').value = p.tag || '';
   $('postTitle').value = p.title || '';
   $('postExcerpt').value = p.excerpt || '';
+  $('postBody').value = p.body || '';
+  $('postImagesText').value = getAllImages(p).join('\n');
   $('postVideoUrl').value = p.videoUrl || '';
   $('postLinkUrl').value = p.linkUrl || '';
-  $('postImageUrl').value = p.imageUrl || '';
   postStatusMsg.textContent = '';
+  $('postImageUploadMsg').textContent = '';
   openModal('postModal');
 }
 
@@ -512,9 +501,10 @@ savePostBtn.addEventListener('click', async () => {
   const tag = $('postTag').value.trim() || 'Post';
   const title = $('postTitle').value.trim();
   const excerpt = $('postExcerpt').value.trim();
+  const body = $('postBody').value.trim();
   const videoUrl = $('postVideoUrl').value.trim();
   const linkUrl = $('postLinkUrl').value.trim();
-  const imageUrl = $('postImageUrl').value.trim();
+  const images = $('postImagesText').value.split('\n').map(s => s.trim()).filter(Boolean);
   if (!title) { alert('Ponele un título al post.'); return; }
 
   const isEdit = !!editingPostId;
@@ -523,7 +513,7 @@ savePostBtn.addEventListener('click', async () => {
 
   savePostBtn.disabled = true;
   try {
-    await db.collection('posts').doc(id).set({ tag, title, excerpt, videoUrl, linkUrl, imageUrl, createdAt });
+    await db.collection('posts').doc(id).set({ tag, title, excerpt, body, images, videoUrl, linkUrl, createdAt });
     resetPostForm();
     editingPostId = null;
     closeModal('postModal');
@@ -538,9 +528,83 @@ savePostBtn.addEventListener('click', async () => {
 
 async function deletePost(id) {
   if (!confirm('¿Eliminar este post?')) return;
-  try { await db.collection('posts').doc(id).delete(); }
+  try {
+    await db.collection('posts').doc(id).delete();
+    if (location.hash.replace(/^#/, '') === 'post/' + id) location.hash = '#view-posts';
+  }
   catch (err) { alert('No se pudo eliminar.'); }
 }
+
+// ---- Post completo (vista de detalle) ----
+async function showPostDetail(id) {
+  const container = $('postDetailContent');
+  container.innerHTML = '<p class="empty-note">Cargando…</p>';
+  let p = postsCache[id] || (typeof allPosts !== 'undefined' ? allPosts[id] : null);
+  if (!p) {
+    try {
+      const doc = await db.collection('posts').doc(id).get();
+      if (!doc.exists) { container.innerHTML = '<p class="empty-note">Este post ya no existe.</p>'; return; }
+      p = { id: doc.id, ...doc.data() };
+    } catch (err) {
+      console.error('No se pudo cargar el post:', err);
+      container.innerHTML = '<p class="empty-note">No se pudo cargar este post.</p>';
+      return;
+    }
+  }
+
+  const videoHtml = (() => {
+    const ytId = getYouTubeId(p.videoUrl);
+    if (!ytId) return '';
+    return `<div class="post-detail-video"><iframe src="https://www.youtube-nocookie.com/embed/${ytId}" title="Video del post" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+  })();
+
+  container.innerHTML = `
+    <div class="post-detail-admin-actions">
+      <button class="admin-btn" id="postDetailEditBtn" type="button">Editar post</button>
+      <button class="admin-btn" id="postDetailDelBtn" type="button">Eliminar post</button>
+    </div>
+    <div class="post-detail-header">
+      <span class="post-tag">${escapeHtml(p.tag || 'Post')}</span>
+      <h1>${escapeHtml(p.title || '')}</h1>
+      <span class="post-meta">${formatDate(p.createdAt)}</span>
+    </div>
+    ${videoHtml}
+    ${renderDetailImages(p)}
+    <div class="post-detail-body">
+      ${renderBodyHtml(p.body || p.excerpt || '')}
+      ${linkCardHtml(p)}
+    </div>
+  `;
+
+  const editBtn = $('postDetailEditBtn');
+  const delBtn = $('postDetailDelBtn');
+  if (editBtn) editBtn.addEventListener('click', () => openPostModalForEdit(p));
+  if (delBtn) delBtn.addEventListener('click', () => deletePost(p.id));
+}
+
+$('postImageFile').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const msgEl = $('postImageUploadMsg');
+  msgEl.style.color = 'var(--muted)';
+  msgEl.textContent = 'Subiendo imagen a GitHub…';
+  try {
+    const url = await uploadImageToGithub(file);
+    const field = $('postImagesText');
+    field.value = field.value.trim() ? field.value.trim() + '\n' + url : url;
+    msgEl.style.color = 'var(--ember)';
+    msgEl.textContent = 'Imagen subida y agregada a la lista ✓ (puede tardar hasta un minuto en verse reflejada)';
+  } catch (err) {
+    msgEl.style.color = 'var(--blood-bright)';
+    if (err.message === 'NO_CONFIG') {
+      msgEl.textContent = 'Primero configura el repo y el token (botón 📦 en el header).';
+    } else {
+      msgEl.textContent = 'No se pudo subir la imagen. Revisa el token/permisos en la consola.';
+    }
+  } finally {
+    e.target.value = '';
+  }
+});
 
 // ---- Programación ----
 function isLiveNow(p) {
