@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=4">
+<link rel="stylesheet" href="css/style.css?v=5">
 
 <!-- Open Graph -->
 <meta property="og:title" content="Grimm Waves Radio">
@@ -174,7 +174,7 @@
       </div>
 
       <div class="section-head" style="margin-top:48px;">
-        <h2>Enviános un mensaje</h2>
+        <h2>Envíanos un mensaje</h2>
         <p>Te leemos apenas podamos.</p>
       </div>
       <div class="admin-edit-panel" style="max-width:480px;">
@@ -183,7 +183,7 @@
         <label for="msgEmail">Email</label>
         <input type="text" id="msgEmail" placeholder="tu@email.com">
         <label for="msgText">Mensaje</label>
-        <textarea id="msgText" rows="4" placeholder="Escribí tu mensaje acá"></textarea>
+        <textarea id="msgText" rows="4" placeholder="Escribe tu mensaje aquí"></textarea>
         <p class="login-status-msg" id="msgStatusMsg"></p>
         <button class="btn-primary" id="sendMsgBtn" type="button">Enviar mensaje</button>
       </div>
@@ -245,13 +245,13 @@
 <main id="view-vivo" class="view" hidden>
   <div class="page-hero">
     <h1>En vivo</h1>
-    <p>Mirá el stream, seguinos en redes y enterate de todo.</p>
+    <p>Mira el stream, síguenos en redes y entérate de todo.</p>
   </div>
   <section>
     <div class="wrap" style="padding-top: 0;">
 
       <div class="twitch-embed-wrap" id="twitchEmbedWrap">
-        <p class="empty-note">Configurá el canal de Twitch desde el panel admin para que aparezca acá.</p>
+        <p class="empty-note">Configura el canal de Twitch desde el panel admin para que aparezca aquí.</p>
       </div>
 
       <div class="social-follow-row" id="socialFollowRow"></div>
@@ -260,7 +260,7 @@
         <h2>Últimos tuits</h2>
       </div>
       <div class="twitter-embed-wrap" id="twitterEmbedWrap">
-        <p class="empty-note">Configurá el usuario de X/Twitter desde el panel admin para que aparezca acá.</p>
+        <p class="empty-note">Configura el usuario de X/Twitter desde el panel admin para que aparezca aquí.</p>
       </div>
 
       <div class="admin-edit-panel admin-only" id="socialEditPanel" style="margin-top:48px;">
@@ -337,14 +337,14 @@
   <div class="modal">
     <button class="modal-close" data-close="loginModal" aria-label="Cerrar">✕</button>
     <h3>Acceso administrador</h3>
-    <p class="sub">Gestioná la programación y los posts de la radio.</p>
+    <p class="sub">Gestiona la programación y los posts de la radio.</p>
     <label for="loginEmail">Email</label>
     <input type="email" id="loginEmail" placeholder="admin@grimmwaves.com">
     <label for="loginPass">Contraseña</label>
     <input type="password" id="loginPass" placeholder="••••••••">
     <p class="login-status-msg" id="loginStatusMsg"></p>
     <button class="btn-primary" id="loginSubmitBtn" type="button">Entrar</button>
-    <p class="modal-note">El usuario admin se crea desde la consola de Firebase, no desde acá.</p>
+    <p class="modal-note">El usuario admin se crea desde la consola de Firebase, no desde aquí.</p>
   </div>
 </div>
 
@@ -400,7 +400,7 @@
     <label for="postExcerpt">Resumen (se ve en la vista previa, dos líneas)</label>
     <input type="text" id="postExcerpt" placeholder="Dos líneas contando de qué se trata">
     <label for="postBody">Contenido completo (se ve al abrir el post)</label>
-    <textarea id="postBody" rows="10" placeholder="Escribí el post completo acá. Dejá una línea en blanco entre párrafos." style="width:100%; background:var(--bg); border:1px solid var(--line); color:var(--bone); padding:11px 14px; border-radius:4px; font-family:var(--font-body); margin-bottom:18px; resize:vertical;"></textarea>
+    <textarea id="postBody" rows="10" placeholder="Escribe el post completo aquí. Deja una línea en blanco entre párrafos." style="width:100%; background:var(--bg); border:1px solid var(--line); color:var(--bone); padding:11px 14px; border-radius:4px; font-family:var(--font-body); margin-bottom:18px; resize:vertical;"></textarea>
     <label for="postImagesText">URLs de imágenes (opcional, una por línea)</label>
     <textarea id="postImagesText" rows="3" placeholder="https://...&#10;https://... (una por línea, la primera es la de portada)" style="width:100%; background:var(--bg); border:1px solid var(--line); color:var(--bone); padding:11px 14px; border-radius:4px; font-family:var(--font-body); margin-bottom:10px; resize:vertical;"></textarea>
     <label for="postImageFile">O sube un archivo (se agrega a la lista de arriba, se guarda en tu repo de GitHub)</label>
@@ -462,11 +462,11 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js"></script>
-<script src="js/posts-render.js?v=4"></script>
-<script src="js/app.js?v=4"></script>
+<script src="js/posts-render.js?v=5"></script>
+<script src="js/app.js?v=5"></script>
 <script src="js/posts-page.js?v=4"></script>
 <script src="js/contact-page.js?v=3"></script>
-<script src="js/submit-page.js?v=3"></script>
+<script src="js/submit-page.js?v=4"></script>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <script src="js/live-page.js?v=1"></script>
 <script src="js/router.js?v=4"></script>

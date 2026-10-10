@@ -10,7 +10,7 @@ const DEFAULT_CONFIG = {
   nowPlayingApi: '',
   stationDesc: 'Radio independiente transmitiendo las 24 horas. Sin filtros, sin máscaras.',
   onAirTitle: 'Grimm Waves Radio',
-  onAirDesc: 'Configurá la estación desde el panel admin.',
+  onAirDesc: 'Configura la estación desde el panel admin.',
   upNext: '—'
 };
 

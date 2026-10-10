@@ -1,5 +1,5 @@
 // ---- Instrucciones (editable por el admin) ----
-const DEFAULT_SUBMIT_TEXT = 'Todavía no se cargaron las instrucciones para enviar música. Volvé más tarde.';
+const DEFAULT_SUBMIT_TEXT = 'Todavía no se cargaron las instrucciones para enviar música. Vuelve más tarde.';
 
 db.doc('config/submit').onSnapshot(
   (snap) => {

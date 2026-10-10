@@ -61,13 +61,12 @@ function renderBodyHtml(text) {
     .join('');
 }
 
-// Galería del post completo: todas las imágenes, cada una clickeable para verse a tamaño completo.
+// Galería del post completo: todas las imágenes, solo para ver dentro de la página.
 function renderDetailImages(p) {
   const images = getAllImages(p);
   if (!images.length) return '';
+  // Las imágenes solo se ven dentro de la página: no son links ni se abren aparte.
   return `<div class="post-detail-gallery">${images.map(img => `
-    <a href="${safeUrlAttr(img)}" target="_blank" rel="noopener" aria-label="Ver imagen completa">
-      <img src="${safeUrlAttr(img)}" alt="" loading="lazy">
-    </a>
+    <img src="${safeUrlAttr(img)}" alt="" loading="lazy" draggable="false">
   `).join('')}</div>`;
 }

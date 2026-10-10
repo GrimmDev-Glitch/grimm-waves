@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// Reemplazá estos valores por los de TU proyecto de Firebase.
+// Reemplaza estos valores por los de TU proyecto de Firebase.
 // Los obtienes en: Firebase Console → ⚙ Configuración del proyecto
 // → pestaña "General" → sección "Tus apps" → app web (</>) → SDK setup.
 //
